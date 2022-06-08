@@ -11,15 +11,18 @@ st.title("StockBook")
 st.write("This application helps you to track your investments.")
 st.write(df)
 
-
 #To add empty lines to the app.
 def space(num_lines=1):
     for _ in range(num_lines):
         st.write("")
 
 st.header("Portfolio Summary")
-
 space(3)
+st.header("Stock Summary")
+symbols = st.multiselect("Choose a particular stock to visualize", sorted(df["stockSymbol"].unique()))
+space(1)
+st.header("Gain Summary")
+
 
 def stockInfo(selectedList):
 	for stock in selectedList:
@@ -38,14 +41,8 @@ def stockInfo(selectedList):
 					value=(sellStockDF['stockInvestment'].sum()- buyStockDF['stockInvestment'].sum()),
 					delta = ((sellStockDF['stockInvestment'].sum() - buyStockDF['stockInvestment'].sum())/buyStockDF['stockInvestment'].sum())*100)
 		space(2)
-st.header("Stock Summary")
-symbols = st.multiselect("Choose a particular stock to visualize", sorted(df["stockSymbol"].unique()))
-space(1)
-stockInfo(symbols)
 
-st.header("Gain Summary")
 def realized_gain_or_loss(df) :
-    
     years_list = df['transactionYear'].unique().tolist()
     for year in years_list :
         total_gain_or_loss = 0
@@ -53,12 +50,10 @@ def realized_gain_or_loss(df) :
         sell_transactions = df_to_consider[df_to_consider['transactionType'] == 'Sell']
         if sell_transactions.empty :
             st.write("**Realized Gain till date:** No Sell Transactions in ", year)
-            #total_gain_or_loss = 0
         else :
             stocks_list = sell_transactions['stockSymbol'].unique().tolist()
             for stock in stocks_list :
                 filter_by_stock = df_to_consider[df_to_consider['stockSymbol']== stock]
-                #print(filter_by_stock)
                 buy_transactions = filter_by_stock[filter_by_stock['transactionType']== 'Buy']
                 Total_investment_in_year = buy_transactions['stockInvestment'].sum()
                 sell_transactions_in_year = sell_transactions[sell_transactions['stockSymbol'] == stock]
@@ -67,10 +62,9 @@ def realized_gain_or_loss(df) :
                 st.metric(label='INR',
 					value=(total_sell_in_year - Total_investment_in_year),
 					delta = ((total_sell_in_year - Total_investment_in_year)/Total_investment_in_year)*100)
-                
-                #st.write(f"Year {year} - Company : {stock} - Total Investment : {Total_investment_in_year}")
-                #print(buy_transactions)
         st.write("Year : ", year, "Total Returns : ", total_gain_or_loss )
                      
 
-realized_gain_or_loss(df)
+if __name__ == '__main__' :
+    stockInfo(symbols)
+    realized_gain_or_loss(df)
