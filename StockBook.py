@@ -21,7 +21,7 @@ space(3)
 st.header("Stock Summary")
 symbols = st.multiselect("Choose a particular stock to visualize", sorted(df["stockSymbol"].unique()))
 space(1)
-st.header("Gain Summary")
+
 
 
 def stockInfo(selectedList):
@@ -59,12 +59,17 @@ def realized_gain_or_loss(df) :
                 sell_transactions_in_year = sell_transactions[sell_transactions['stockSymbol'] == stock]
                 total_sell_in_year = sell_transactions_in_year['stockInvestment'].sum()
                 total_gain_or_loss += total_sell_in_year - Total_investment_in_year
+                st.write('Company Name : ', stock, '   |   Year : ' , year)
+                st.write("Gain/Loss : ")
                 st.metric(label='INR',
 					value=(total_sell_in_year - Total_investment_in_year),
 					delta = ((total_sell_in_year - Total_investment_in_year)/Total_investment_in_year)*100)
+                st.markdown("""<hr style="height:2px;border:none;color:#333;background-color:#333;" /> """, unsafe_allow_html=True)
         st.write("Year : ", year, "Total Returns : ", total_gain_or_loss )
                      
 
 if __name__ == '__main__' :
     stockInfo(symbols)
+    st.markdown("""<hr style="height:10px;border:none;color:#333;background-color:#333;" /> """, unsafe_allow_html=True)
+    st.header("Gain Summary")
     realized_gain_or_loss(df)
