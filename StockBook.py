@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-dataURL = "/home/boss/Bombarding/projects/stockBook - Streamlit/Data.csv"
+dataURL = "Data.csv"
 data = pd.read_csv(dataURL)
 df = pd.DataFrame(data)
 #stockSymbol transactionType	transactionDate	stockQuantity	stockPrice	stockInvestment	userComments
@@ -43,8 +43,34 @@ symbols = st.multiselect("Choose a particular stock to visualize", sorted(df["st
 space(1)
 stockInfo(symbols)
 
+st.header("Gain Summary")
+def realized_gain_or_loss(df) :
+    
+    years_list = df['transactionYear'].unique().tolist()
+    for year in years_list :
+        total_gain_or_loss = 0
+        df_to_consider = df[df['transactionYear']== year]
+        sell_transactions = df_to_consider[df_to_consider['transactionType'] == 'Sell']
+        if sell_transactions.empty :
+            st.write("**Realized Gain till date:** No Sell Transactions in ", year)
+            #total_gain_or_loss = 0
+        else :
+            stocks_list = sell_transactions['stockSymbol'].unique().tolist()
+            for stock in stocks_list :
+                filter_by_stock = df_to_consider[df_to_consider['stockSymbol']== stock]
+                #print(filter_by_stock)
+                buy_transactions = filter_by_stock[filter_by_stock['transactionType']== 'Buy']
+                Total_investment_in_year = buy_transactions['stockInvestment'].sum()
+                sell_transactions_in_year = sell_transactions[sell_transactions['stockSymbol'] == stock]
+                total_sell_in_year = sell_transactions_in_year['stockInvestment'].sum()
+                total_gain_or_loss += total_sell_in_year - Total_investment_in_year
+                st.metric(label='INR',
+					value=(total_sell_in_year - Total_investment_in_year),
+					delta = ((total_sell_in_year - Total_investment_in_year)/Total_investment_in_year)*100)
+                
+                #st.write(f"Year {year} - Company : {stock} - Total Investment : {Total_investment_in_year}")
+                #print(buy_transactions)
+        st.write("Year : ", year, "Total Returns : ", total_gain_or_loss )
+                     
 
-
-
-
-
+realized_gain_or_loss(df)
