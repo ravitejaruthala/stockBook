@@ -1,0 +1,1 @@
+This Project is to visualize the investment portifolio in a better way.
