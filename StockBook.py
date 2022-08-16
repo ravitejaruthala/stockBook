@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-#stockSymbol transactionType	transactionDate	stockQuantity	stockPrice	stockInvestment	userComments
-
 #To add empty lines to the app.
 def space(num_lines=1):
     for _ in range(num_lines):
@@ -26,7 +24,6 @@ def stockInfo(selectedList):
 					value=(sellStockDF['stockInvestment'].sum()- buyStockDF['stockInvestment'].sum()),
 					delta = ((sellStockDF['stockInvestment'].sum() - buyStockDF['stockInvestment'].sum())/buyStockDF['stockInvestment'].sum())*100)
 		space(2)
-
 st.set_page_config(layout="centered", page_title="StockBook")
 st.title("StockBook")
 st.write("This application helps you to track your investments.")
@@ -37,7 +34,7 @@ uploaded_file = st.file_uploader('Upload your file here!!', type=['csv'], accept
 if uploaded_file is not None:
 	data = pd.read_csv(uploaded_file)
 	df = pd.DataFrame(data)
-	st.write(df)
+	#st.write(df)
 	st.header("Portfolio Summary")
 	portfolioSummary = px.pie(df, values='stockInvestment', names='stockSymbol')
 	st.write(portfolioSummary)
@@ -51,6 +48,5 @@ if uploaded_file is not None:
 	st.write('A table that provides profit (descending) and loss (ascending')
 	st.header("Investment summary")
 	st.write('A statement that provides overview on investments')
-
 else:
 	st.write("You need to upload a file to track.")
